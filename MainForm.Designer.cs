@@ -1,4 +1,6 @@
-﻿namespace PIDPeltier_Controller
+﻿using System.Timers;
+
+namespace PIDPeltier_Controller
 {
     partial class MainForm
     {
@@ -18,6 +20,8 @@
                 components.Dispose();
             }
             base.Dispose(disposing);
+
+            
         }
 
         #region Windows Form Designer generated code
@@ -28,6 +32,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.aTimer = new System.Timers.Timer();
+
             this.components = new System.ComponentModel.Container();
             this.COM = new System.IO.Ports.SerialPort(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -99,7 +105,8 @@
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(64, 21);
             this.comboBox1.TabIndex = 2;
-            // 
+            this.comboBox1.Click += new System.EventHandler(this.comboBox1_Clicked);
+
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(104, 29);

@@ -22,8 +22,8 @@ namespace PIDPeltier_Controller
 
         private SerialPort comDevice = new SerialPort();
         private DateTime localDate = DateTime.Now;
-        private static System.Timers.Timer aTimer = new System.Timers.Timer();
-        private static Mutex mut = new Mutex();
+        private System.Timers.Timer aTimer;
+
         private void printlineTimestamped(RichTextBox textbox, string line)
         {
             this.localDate = DateTime.Now;
@@ -41,6 +41,15 @@ namespace PIDPeltier_Controller
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if(checkBox1.Checked)
+            {
+                checkBox1.Checked = false;
+            }
+            if(checkBox2.Checked)
+            {
+                checkBox2.Checked = false;
+            }
+
             if (this.comDevice.IsOpen)
             {
                 try
@@ -82,7 +91,6 @@ namespace PIDPeltier_Controller
             {
                 try
                 {
-                    mut.WaitOne();
                     this.localDate = DateTime.Now;
                     textBox6.Text = localDate.ToString("HH:mm:ss.ff");
 
@@ -93,9 +101,7 @@ namespace PIDPeltier_Controller
                     this.localDate = DateTime.Now;
                     textBox7.Text = localDate.ToString("HH:mm:ss.ff");
 
-                    printlineTimestamped(richTextBox1, line);
-
-                    mut.ReleaseMutex();
+                    printlineTimestamped(richTextBox1, line + " UNSAFE THREAD OPERATION");
                 }
                 catch (Exception exception)
                 {
@@ -242,8 +248,6 @@ namespace PIDPeltier_Controller
             {
                 try
                 {
-                    mut.WaitOne();
-
                     this.localDate = DateTime.Now;
                     textBox6.Text = localDate.ToString("HH:mm:ss.ff");
 
@@ -256,7 +260,6 @@ namespace PIDPeltier_Controller
 
                     printlineTimestamped(richTextBox1, line);
 
-                    mut.ReleaseMutex();
                 }
                 catch (Exception exception)
                 {
@@ -292,5 +295,16 @@ namespace PIDPeltier_Controller
                 this.printlineTimestamped(this.richTextBox1, exception.ToString());
             }
         }
+        private void comboBox1_Clicked(object sender, EventArgs e)
+        {
+
+            comboBox1.Items.Clear();
+            comboBox1.ResetText();
+
+            string[] ports = SerialPort.GetPortNames();
+            this.comboBox1.Items.AddRange(ports);
+        }
     }
+
+
 }
