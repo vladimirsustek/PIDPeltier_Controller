@@ -94,14 +94,40 @@ namespace PIDPeltier_Controller
                     this.localDate = DateTime.Now;
                     textBox6.Text = localDate.ToString("HH:mm:ss.ff");
 
-                    this.comDevice.WriteLine("CHIPT");
+                    this.comDevice.WriteLine("RD_TER1");
                     string line = this.comDevice.ReadLine();
-                    textBox5.Text = line;
+                    //printlineTimestamped(richTextBox1, line);
+                    line = this.comDevice.ReadLine();
+                    if(checkBox3.Checked)
+                    {
+                        printlineTimestamped(richTextBox1, line);
+                    }
+                    string ok = this.comDevice.ReadLine();
+                    //printlineTimestamped(richTextBox1, ok);
 
-                    this.localDate = DateTime.Now;
-                    textBox7.Text = localDate.ToString("HH:mm:ss.ff");
+                    if (0 == String.Compare(ok, "CMD_OK"))
+                    {
+                        textBox5.Text = line;
+                    }
 
-                    printlineTimestamped(richTextBox1, line + " UNSAFE THREAD OPERATION");
+                    this.comDevice.WriteLine("RD_TER2");
+                    line = this.comDevice.ReadLine();
+                    //printlineTimestamped(richTextBox1, line);
+                    line = this.comDevice.ReadLine();
+                    if (checkBox4.Checked)
+                    {
+                        printlineTimestamped(richTextBox1, line);
+                    }
+                    //printlineTimestamped(richTextBox1, line);
+                    ok = this.comDevice.ReadLine();
+                    //printlineTimestamped(richTextBox1, ok);
+
+
+                    if (0 == String.Compare(ok, "CMD_OK"))
+                    {
+                        textBox8.Text = line;
+                    }
+
                 }
                 catch (Exception exception)
                 {
@@ -135,9 +161,11 @@ namespace PIDPeltier_Controller
                 {
                     try
                     {
-                        string cmd = "PA15_" + hScrollBar1.Value.ToString().PadLeft(3, '0');
+                        string cmd = "ST_PWM1_" + Int32.Parse(this.textBox2.Text).ToString().PadLeft(5, '0');
                         this.comDevice.WriteLine(cmd);
                         string line = this.comDevice.ReadLine();
+                        printlineTimestamped(richTextBox1, line);
+                        line = this.comDevice.ReadLine();
                         printlineTimestamped(richTextBox1, line);
                     }
                     catch (Exception exception)
@@ -159,9 +187,11 @@ namespace PIDPeltier_Controller
                 {
                     try
                     {
-                        string cmd = "PB03_" + hScrollBar2.Value.ToString().PadLeft(3, '0');
+                        string cmd = "ST_PWM2_" + Int32.Parse(this.textBox3.Text).ToString().PadLeft(5, '0');
                         this.comDevice.WriteLine(cmd);
                         string line = this.comDevice.ReadLine();
+                        printlineTimestamped(richTextBox1, line);
+                        line = this.comDevice.ReadLine();
                         printlineTimestamped(richTextBox1, line);
                     }
                     catch (Exception exception)
@@ -180,9 +210,11 @@ namespace PIDPeltier_Controller
             {
                 try
                 {
-                    string cmd = "PA15_" + Int32.Parse(this.textBox2.Text).ToString().PadLeft(3, '0');
+                    string cmd = "ST_PWM1_" + Int32.Parse(this.textBox3.Text).ToString().PadLeft(5, '0');
                     this.comDevice.WriteLine(cmd);
                     string line = this.comDevice.ReadLine();
+                    printlineTimestamped(richTextBox1, line);
+                    line = this.comDevice.ReadLine();
                     printlineTimestamped(richTextBox1, line);
                 }
                 catch (Exception exception)
@@ -198,17 +230,19 @@ namespace PIDPeltier_Controller
 
             if (checkBox1.Checked)
             {
-                try
-                {
-                    string cmd = "PB03_" + Int32.Parse(this.textBox3.Text).ToString().PadLeft(3, '0');
-                    this.comDevice.WriteLine(cmd);
-                    string line = this.comDevice.ReadLine();
-                    printlineTimestamped(richTextBox1, line);
-                }
-                catch (Exception exception)
-                {
-                    this.printlineTimestamped(this.richTextBox1, exception.ToString());
-                }
+                    try
+                    {
+                        string cmd = "ST_PWM2_" + Int32.Parse(this.textBox3.Text).ToString().PadLeft(5, '0');
+                        this.comDevice.WriteLine(cmd);
+                        string line = this.comDevice.ReadLine();
+                        printlineTimestamped(richTextBox1, line);
+                        line = this.comDevice.ReadLine();
+                        printlineTimestamped(richTextBox1, line);
+                    }
+                    catch (Exception exception)
+                    {
+                        this.printlineTimestamped(this.richTextBox1, exception.ToString());
+                    }
             }
         }
 
@@ -216,9 +250,11 @@ namespace PIDPeltier_Controller
         {
             try
             {
-                string cmd = "PA15_" + Int32.Parse(this.textBox2.Text).ToString().PadLeft(3, '0');
+                string cmd = "ST_PWM1_" + Int32.Parse(this.textBox2.Text).ToString().PadLeft(5, '0');
                 this.comDevice.WriteLine(cmd);
                 string line = this.comDevice.ReadLine();
+                printlineTimestamped(richTextBox1, line);
+                line = this.comDevice.ReadLine();
                 printlineTimestamped(richTextBox1, line);
             }
             catch (Exception exception)
@@ -231,9 +267,11 @@ namespace PIDPeltier_Controller
         {
             try
             {
-                string cmd = "PB03_" + Int32.Parse(this.textBox3.Text).ToString().PadLeft(3, '0');
+                string cmd = "ST_PWM2_" + Int32.Parse(this.textBox3.Text).ToString().PadLeft(5, '0');
                 this.comDevice.WriteLine(cmd);
                 string line = this.comDevice.ReadLine();
+                printlineTimestamped(richTextBox1, line);
+                line = this.comDevice.ReadLine();
                 printlineTimestamped(richTextBox1, line);
             }
             catch (Exception exception)
@@ -251,14 +289,32 @@ namespace PIDPeltier_Controller
                     this.localDate = DateTime.Now;
                     textBox6.Text = localDate.ToString("HH:mm:ss.ff");
 
-                    this.comDevice.WriteLine("CHIPT");
+                    this.comDevice.WriteLine("RD_TER1");
                     string line = this.comDevice.ReadLine();
-                    textBox5.Text = line;
-
-                    this.localDate = DateTime.Now;
-                    textBox7.Text = localDate.ToString("HH:mm:ss.ff");
-
                     printlineTimestamped(richTextBox1, line);
+                    line = this.comDevice.ReadLine();
+                    printlineTimestamped(richTextBox1, line);
+                    string ok = this.comDevice.ReadLine();
+                    printlineTimestamped(richTextBox1, ok);
+
+                    if (0 == String.Compare(ok, "CMD_OK"))
+                    {
+                        textBox5.Text = line;
+                    }
+
+                    this.comDevice.WriteLine("RD_TER2");
+                    line = this.comDevice.ReadLine();
+                    printlineTimestamped(richTextBox1, line);
+                    line = this.comDevice.ReadLine();
+                    printlineTimestamped(richTextBox1, line);
+                    ok = this.comDevice.ReadLine();
+                    printlineTimestamped(richTextBox1, ok);
+
+
+                    if (0 == String.Compare(ok, "CMD_OK"))
+                    {
+                        textBox8.Text = line;
+                    }
 
                 }
                 catch (Exception exception)
@@ -272,7 +328,7 @@ namespace PIDPeltier_Controller
         {
             try
             {
-                this.comDevice.WriteLine("LEDG_1");
+                this.comDevice.WriteLine("ST_LEDR_1");
                 string line = this.comDevice.ReadLine();
                 printlineTimestamped(richTextBox1, line);
             }
@@ -286,7 +342,7 @@ namespace PIDPeltier_Controller
         {
             try
             {
-                this.comDevice.WriteLine("LEDG_0");
+                this.comDevice.WriteLine("ST_LEDR_0");
                 string line = this.comDevice.ReadLine();
                 printlineTimestamped(richTextBox1, line);
             }
@@ -303,6 +359,70 @@ namespace PIDPeltier_Controller
 
             string[] ports = SerialPort.GetPortNames();
             this.comboBox1.Items.AddRange(ports);
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.comDevice.WriteLine("EN_PWM1_1");
+                string line = this.comDevice.ReadLine();
+                printlineTimestamped(richTextBox1, line);
+                line = this.comDevice.ReadLine();
+                printlineTimestamped(richTextBox1, line);
+            }
+            catch (Exception exception)
+            {
+                this.printlineTimestamped(this.richTextBox1, exception.ToString());
+            }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.comDevice.WriteLine("EN_PWM1_0");
+                string line = this.comDevice.ReadLine();
+                printlineTimestamped(richTextBox1, line);
+                line = this.comDevice.ReadLine();
+                printlineTimestamped(richTextBox1, line);
+            }
+            catch (Exception exception)
+            {
+                this.printlineTimestamped(this.richTextBox1, exception.ToString());
+            }
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.comDevice.WriteLine("EN_PWM2_1");
+                string line = this.comDevice.ReadLine();
+                printlineTimestamped(richTextBox1, line);
+                line = this.comDevice.ReadLine();
+                printlineTimestamped(richTextBox1, line);
+            }
+            catch (Exception exception)
+            {
+                this.printlineTimestamped(this.richTextBox1, exception.ToString());
+            }
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.comDevice.WriteLine("EN_PWM2_0");
+                string line = this.comDevice.ReadLine();
+                printlineTimestamped(richTextBox1, line);
+                line = this.comDevice.ReadLine();
+                printlineTimestamped(richTextBox1, line);
+            }
+            catch (Exception exception)
+            {
+                this.printlineTimestamped(this.richTextBox1, exception.ToString());
+            }
         }
     }
 

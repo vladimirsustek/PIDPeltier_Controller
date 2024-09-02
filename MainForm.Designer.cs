@@ -32,9 +32,8 @@ namespace PIDPeltier_Controller
         /// </summary>
         private void InitializeComponent()
         {
-            this.aTimer = new System.Timers.Timer();
-
             this.components = new System.ComponentModel.Container();
+            this.aTimer = new System.Timers.Timer();
             this.COM = new System.IO.Ports.SerialPort(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -42,6 +41,10 @@ namespace PIDPeltier_Controller
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.button10 = new System.Windows.Forms.Button();
+            this.button9 = new System.Windows.Forms.Button();
+            this.button8 = new System.Windows.Forms.Button();
+            this.button7 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.textBox3 = new System.Windows.Forms.TextBox();
@@ -63,10 +66,22 @@ namespace PIDPeltier_Controller
             this.label2 = new System.Windows.Forms.Label();
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
+            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.label3 = new System.Windows.Forms.Label();
+            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.checkBox3 = new System.Windows.Forms.CheckBox();
+            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            ((System.ComponentModel.ISupportInitialize)(this.aTimer)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
+            // 
+            // aTimer
+            // 
+            this.aTimer.Enabled = true;
+            this.aTimer.SynchronizingObject = this;
             // 
             // groupBox1
             // 
@@ -76,7 +91,7 @@ namespace PIDPeltier_Controller
             this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Location = new System.Drawing.Point(12, 22);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(236, 109);
+            this.groupBox1.Size = new System.Drawing.Size(269, 109);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "COM";
@@ -106,7 +121,7 @@ namespace PIDPeltier_Controller
             this.comboBox1.Size = new System.Drawing.Size(64, 21);
             this.comboBox1.TabIndex = 2;
             this.comboBox1.Click += new System.EventHandler(this.comboBox1_Clicked);
-
+            // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(104, 29);
@@ -119,6 +134,10 @@ namespace PIDPeltier_Controller
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.button10);
+            this.groupBox2.Controls.Add(this.button9);
+            this.groupBox2.Controls.Add(this.button8);
+            this.groupBox2.Controls.Add(this.button7);
             this.groupBox2.Controls.Add(this.button3);
             this.groupBox2.Controls.Add(this.button2);
             this.groupBox2.Controls.Add(this.textBox3);
@@ -128,14 +147,54 @@ namespace PIDPeltier_Controller
             this.groupBox2.Controls.Add(this.checkBox1);
             this.groupBox2.Location = new System.Drawing.Point(12, 137);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(236, 212);
+            this.groupBox2.Size = new System.Drawing.Size(269, 212);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "PWM";
             // 
+            // button10
+            // 
+            this.button10.Location = new System.Drawing.Point(85, 117);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(52, 23);
+            this.button10.TabIndex = 20;
+            this.button10.Text = "Off";
+            this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
+            // 
+            // button9
+            // 
+            this.button9.Location = new System.Drawing.Point(27, 117);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(52, 23);
+            this.button9.TabIndex = 19;
+            this.button9.Text = "On";
+            this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(85, 19);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(52, 23);
+            this.button8.TabIndex = 18;
+            this.button8.Text = "Off";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(27, 19);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(52, 23);
+            this.button7.TabIndex = 17;
+            this.button7.Text = "On";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
+            // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(27, 149);
+            this.button3.Location = new System.Drawing.Point(27, 167);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(179, 23);
             this.button3.TabIndex = 8;
@@ -155,7 +214,7 @@ namespace PIDPeltier_Controller
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(166, 125);
+            this.textBox3.Location = new System.Drawing.Point(166, 143);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(40, 20);
             this.textBox3.TabIndex = 7;
@@ -174,7 +233,7 @@ namespace PIDPeltier_Controller
             // hScrollBar2
             // 
             this.hScrollBar2.LargeChange = 9;
-            this.hScrollBar2.Location = new System.Drawing.Point(15, 125);
+            this.hScrollBar2.Location = new System.Drawing.Point(15, 143);
             this.hScrollBar2.Maximum = 999;
             this.hScrollBar2.Name = "hScrollBar2";
             this.hScrollBar2.Size = new System.Drawing.Size(132, 21);
@@ -194,7 +253,7 @@ namespace PIDPeltier_Controller
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(123, 19);
+            this.checkBox1.Location = new System.Drawing.Point(161, 19);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(102, 17);
             this.checkBox1.TabIndex = 3;
@@ -214,14 +273,18 @@ namespace PIDPeltier_Controller
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(254, 22);
+            this.richTextBox1.Location = new System.Drawing.Point(299, 22);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(368, 519);
+            this.richTextBox1.Size = new System.Drawing.Size(323, 519);
             this.richTextBox1.TabIndex = 2;
             this.richTextBox1.Text = "";
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.checkBox4);
+            this.groupBox3.Controls.Add(this.checkBox3);
+            this.groupBox3.Controls.Add(this.textBox8);
+            this.groupBox3.Controls.Add(this.label3);
             this.groupBox3.Controls.Add(this.textBox7);
             this.groupBox3.Controls.Add(this.textBox6);
             this.groupBox3.Controls.Add(this.textBox5);
@@ -234,21 +297,21 @@ namespace PIDPeltier_Controller
             this.groupBox3.Controls.Add(this.checkBox2);
             this.groupBox3.Location = new System.Drawing.Point(12, 355);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(236, 186);
+            this.groupBox3.Size = new System.Drawing.Size(269, 186);
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Chip temperature";
             // 
             // textBox7
             // 
-            this.textBox7.Location = new System.Drawing.Point(132, 120);
+            this.textBox7.Location = new System.Drawing.Point(132, 142);
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(64, 20);
             this.textBox7.TabIndex = 15;
             // 
             // textBox6
             // 
-            this.textBox6.Location = new System.Drawing.Point(132, 96);
+            this.textBox6.Location = new System.Drawing.Point(132, 120);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(64, 20);
             this.textBox6.TabIndex = 14;
@@ -263,7 +326,7 @@ namespace PIDPeltier_Controller
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(37, 123);
+            this.label6.Location = new System.Drawing.Point(37, 145);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(63, 13);
             this.label6.TabIndex = 12;
@@ -272,7 +335,7 @@ namespace PIDPeltier_Controller
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(37, 99);
+            this.label5.Location = new System.Drawing.Point(37, 123);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(70, 13);
             this.label5.TabIndex = 11;
@@ -281,11 +344,11 @@ namespace PIDPeltier_Controller
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(37, 77);
+            this.label4.Location = new System.Drawing.Point(36, 74);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(81, 13);
+            this.label4.Size = new System.Drawing.Size(57, 13);
             this.label4.TabIndex = 10;
-            this.label4.Text = "Temperature °C";
+            this.label4.Text = "T_norm °C";
             // 
             // textBox4
             // 
@@ -334,6 +397,42 @@ namespace PIDPeltier_Controller
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(37, 97);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(56, 13);
+            this.label3.TabIndex = 16;
+            this.label3.Text = "T_calib °C";
+            // 
+            // textBox8
+            // 
+            this.textBox8.Location = new System.Drawing.Point(132, 94);
+            this.textBox8.Name = "textBox8";
+            this.textBox8.Size = new System.Drawing.Size(64, 20);
+            this.textBox8.TabIndex = 17;
+            // 
+            // checkBox3
+            // 
+            this.checkBox3.AutoSize = true;
+            this.checkBox3.Location = new System.Drawing.Point(202, 74);
+            this.checkBox3.Name = "checkBox3";
+            this.checkBox3.Size = new System.Drawing.Size(64, 17);
+            this.checkBox3.TabIndex = 18;
+            this.checkBox3.Text = "Logging";
+            this.checkBox3.UseVisualStyleBackColor = true;
+            // 
+            // checkBox4
+            // 
+            this.checkBox4.AutoSize = true;
+            this.checkBox4.Location = new System.Drawing.Point(202, 96);
+            this.checkBox4.Name = "checkBox4";
+            this.checkBox4.Size = new System.Drawing.Size(64, 17);
+            this.checkBox4.TabIndex = 19;
+            this.checkBox4.Text = "Logging";
+            this.checkBox4.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -348,12 +447,14 @@ namespace PIDPeltier_Controller
             this.Name = "MainForm";
             this.Text = "PIDPeltier";
             this.Load += new System.EventHandler(this.MainForm_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.aTimer)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -388,6 +489,15 @@ namespace PIDPeltier_Controller
         private System.Windows.Forms.TextBox textBox5;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button button10;
+        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.BindingSource bindingSource1;
+        private System.Windows.Forms.TextBox textBox8;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.CheckBox checkBox4;
+        private System.Windows.Forms.CheckBox checkBox3;
     }
 }
 
