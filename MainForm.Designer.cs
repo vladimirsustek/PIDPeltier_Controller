@@ -55,6 +55,10 @@ namespace PIDPeltier_Controller
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.checkBox3 = new System.Windows.Forms.CheckBox();
+            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.textBox7 = new System.Windows.Forms.TextBox();
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.textBox5 = new System.Windows.Forms.TextBox();
@@ -67,10 +71,7 @@ namespace PIDPeltier_Controller
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.label3 = new System.Windows.Forms.Label();
-            this.textBox8 = new System.Windows.Forms.TextBox();
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.button11 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.aTimer)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -134,6 +135,7 @@ namespace PIDPeltier_Controller
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.button11);
             this.groupBox2.Controls.Add(this.button10);
             this.groupBox2.Controls.Add(this.button9);
             this.groupBox2.Controls.Add(this.button8);
@@ -147,7 +149,7 @@ namespace PIDPeltier_Controller
             this.groupBox2.Controls.Add(this.checkBox1);
             this.groupBox2.Location = new System.Drawing.Point(12, 137);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(269, 212);
+            this.groupBox2.Size = new System.Drawing.Size(269, 236);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "PWM";
@@ -275,7 +277,7 @@ namespace PIDPeltier_Controller
             // 
             this.richTextBox1.Location = new System.Drawing.Point(299, 22);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(323, 519);
+            this.richTextBox1.Size = new System.Drawing.Size(658, 556);
             this.richTextBox1.TabIndex = 2;
             this.richTextBox1.Text = "";
             // 
@@ -295,12 +297,48 @@ namespace PIDPeltier_Controller
             this.groupBox3.Controls.Add(this.button4);
             this.groupBox3.Controls.Add(this.label2);
             this.groupBox3.Controls.Add(this.checkBox2);
-            this.groupBox3.Location = new System.Drawing.Point(12, 355);
+            this.groupBox3.Location = new System.Drawing.Point(12, 379);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(269, 186);
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Chip temperature";
+            // 
+            // checkBox4
+            // 
+            this.checkBox4.AutoSize = true;
+            this.checkBox4.Location = new System.Drawing.Point(202, 96);
+            this.checkBox4.Name = "checkBox4";
+            this.checkBox4.Size = new System.Drawing.Size(64, 17);
+            this.checkBox4.TabIndex = 19;
+            this.checkBox4.Text = "Logging";
+            this.checkBox4.UseVisualStyleBackColor = true;
+            // 
+            // checkBox3
+            // 
+            this.checkBox3.AutoSize = true;
+            this.checkBox3.Location = new System.Drawing.Point(202, 74);
+            this.checkBox3.Name = "checkBox3";
+            this.checkBox3.Size = new System.Drawing.Size(64, 17);
+            this.checkBox3.TabIndex = 18;
+            this.checkBox3.Text = "Logging";
+            this.checkBox3.UseVisualStyleBackColor = true;
+            // 
+            // textBox8
+            // 
+            this.textBox8.Location = new System.Drawing.Point(132, 94);
+            this.textBox8.Name = "textBox8";
+            this.textBox8.Size = new System.Drawing.Size(64, 20);
+            this.textBox8.TabIndex = 17;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(37, 97);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(56, 13);
+            this.label3.TabIndex = 16;
+            this.label3.Text = "T_calib °C";
             // 
             // textBox7
             // 
@@ -356,7 +394,7 @@ namespace PIDPeltier_Controller
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(64, 20);
             this.textBox4.TabIndex = 5;
-            this.textBox4.Text = "300";
+            this.textBox4.Text = "500";
             // 
             // button4
             // 
@@ -379,7 +417,7 @@ namespace PIDPeltier_Controller
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(39, 547);
+            this.button5.Location = new System.Drawing.Point(39, 571);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(52, 23);
             this.button5.TabIndex = 16;
@@ -389,7 +427,7 @@ namespace PIDPeltier_Controller
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(107, 547);
+            this.button6.Location = new System.Drawing.Point(107, 571);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(52, 23);
             this.button6.TabIndex = 17;
@@ -397,47 +435,22 @@ namespace PIDPeltier_Controller
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
-            // label3
+            // button11
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(37, 97);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(56, 13);
-            this.label3.TabIndex = 16;
-            this.label3.Text = "T_calib °C";
-            // 
-            // textBox8
-            // 
-            this.textBox8.Location = new System.Drawing.Point(132, 94);
-            this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(64, 20);
-            this.textBox8.TabIndex = 17;
-            // 
-            // checkBox3
-            // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(202, 74);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(64, 17);
-            this.checkBox3.TabIndex = 18;
-            this.checkBox3.Text = "Logging";
-            this.checkBox3.UseVisualStyleBackColor = true;
-            // 
-            // checkBox4
-            // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(202, 96);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(64, 17);
-            this.checkBox4.TabIndex = 19;
-            this.checkBox4.Text = "Logging";
-            this.checkBox4.UseVisualStyleBackColor = true;
+            this.button11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.button11.Location = new System.Drawing.Point(79, 207);
+            this.button11.Name = "button11";
+            this.button11.Size = new System.Drawing.Size(100, 23);
+            this.button11.TabIndex = 21;
+            this.button11.Text = "Refresh IWDG";
+            this.button11.UseVisualStyleBackColor = false;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(637, 689);
+            this.ClientSize = new System.Drawing.Size(969, 689);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.groupBox3);
@@ -498,6 +511,7 @@ namespace PIDPeltier_Controller
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox checkBox4;
         private System.Windows.Forms.CheckBox checkBox3;
+        private System.Windows.Forms.Button button11;
     }
 }
 

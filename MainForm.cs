@@ -41,7 +41,10 @@ namespace PIDPeltier_Controller
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if(checkBox1.Checked)
+            comDevice.ReadTimeout = 1000;
+            comDevice.WriteTimeout = 1000;
+
+            if (checkBox1.Checked)
             {
                 checkBox1.Checked = false;
             }
@@ -95,38 +98,48 @@ namespace PIDPeltier_Controller
                     textBox6.Text = localDate.ToString("HH:mm:ss.ff");
 
                     this.comDevice.WriteLine("RD_TER1");
-                    string line = this.comDevice.ReadLine();
-                    //printlineTimestamped(richTextBox1, line);
-                    line = this.comDevice.ReadLine();
-                    if(checkBox3.Checked)
-                    {
-                        printlineTimestamped(richTextBox1, line);
-                    }
+                    string cmd_echo = this.comDevice.ReadLine();
+                    string value = this.comDevice.ReadLine();
                     string ok = this.comDevice.ReadLine();
+
+                    //printlineTimestamped(richTextBox1, cmd_echo);
+                    if (checkBox3.Checked)
+                    {
+                        printlineTimestamped(richTextBox1, value);
+                    }
                     //printlineTimestamped(richTextBox1, ok);
+
+                    Thread.Sleep(50);
 
                     if (0 == String.Compare(ok, "CMD_OK"))
                     {
-                        textBox5.Text = line;
+                        textBox5.Text = value;
                     }
 
                     this.comDevice.WriteLine("RD_TER2");
-                    line = this.comDevice.ReadLine();
-                    //printlineTimestamped(richTextBox1, line);
-                    line = this.comDevice.ReadLine();
+                    cmd_echo = this.comDevice.ReadLine();
+                    value = this.comDevice.ReadLine();
+                    ok = this.comDevice.ReadLine();
+
+                    //printlineTimestamped(richTextBox1, cmd_echo);
                     if (checkBox4.Checked)
                     {
-                        printlineTimestamped(richTextBox1, line);
+                        printlineTimestamped(richTextBox1, value);
                     }
-                    //printlineTimestamped(richTextBox1, line);
-                    ok = this.comDevice.ReadLine();
                     //printlineTimestamped(richTextBox1, ok);
-
 
                     if (0 == String.Compare(ok, "CMD_OK"))
                     {
-                        textBox8.Text = line;
+                        textBox8.Text = value;
                     }
+
+                    Thread.Sleep(50);
+
+                    this.comDevice.WriteLine("ST_SWDG");
+                    cmd_echo = this.comDevice.ReadLine();
+                    //printlineTimestamped(richTextBox1, cmd_echo);
+                    ok = this.comDevice.ReadLine();
+                    //printlineTimestamped(richTextBox1, ok);
 
                 }
                 catch (Exception exception)
@@ -290,30 +303,39 @@ namespace PIDPeltier_Controller
                     textBox6.Text = localDate.ToString("HH:mm:ss.ff");
 
                     this.comDevice.WriteLine("RD_TER1");
-                    string line = this.comDevice.ReadLine();
-                    printlineTimestamped(richTextBox1, line);
-                    line = this.comDevice.ReadLine();
-                    printlineTimestamped(richTextBox1, line);
+                    string cmd_echo = this.comDevice.ReadLine();
+                    string value = this.comDevice.ReadLine();
                     string ok = this.comDevice.ReadLine();
-                    printlineTimestamped(richTextBox1, ok);
+
+                    //printlineTimestamped(richTextBox1, cmd_echo);
+                    if (checkBox3.Checked)
+                    {
+                        printlineTimestamped(richTextBox1, value);
+                    }
+                    //printlineTimestamped(richTextBox1, ok);
+
+                    Thread.Sleep(50);
 
                     if (0 == String.Compare(ok, "CMD_OK"))
                     {
-                        textBox5.Text = line;
+                        textBox5.Text = value;
                     }
 
                     this.comDevice.WriteLine("RD_TER2");
-                    line = this.comDevice.ReadLine();
-                    printlineTimestamped(richTextBox1, line);
-                    line = this.comDevice.ReadLine();
-                    printlineTimestamped(richTextBox1, line);
+                    cmd_echo = this.comDevice.ReadLine();
+                    value = this.comDevice.ReadLine();
                     ok = this.comDevice.ReadLine();
-                    printlineTimestamped(richTextBox1, ok);
 
+                    //printlineTimestamped(richTextBox1, cmd_echo);
+                    if (checkBox4.Checked)
+                    {
+                        printlineTimestamped(richTextBox1, value);
+                    }
+                    //printlineTimestamped(richTextBox1, ok);
 
                     if (0 == String.Compare(ok, "CMD_OK"))
                     {
-                        textBox8.Text = line;
+                        textBox8.Text = value;
                     }
 
                 }
@@ -414,6 +436,22 @@ namespace PIDPeltier_Controller
             try
             {
                 this.comDevice.WriteLine("EN_PWM2_0");
+                string line = this.comDevice.ReadLine();
+                printlineTimestamped(richTextBox1, line);
+                line = this.comDevice.ReadLine();
+                printlineTimestamped(richTextBox1, line);
+            }
+            catch (Exception exception)
+            {
+                this.printlineTimestamped(this.richTextBox1, exception.ToString());
+            }
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.comDevice.WriteLine("ST_SWDG");
                 string line = this.comDevice.ReadLine();
                 printlineTimestamped(richTextBox1, line);
                 line = this.comDevice.ReadLine();
