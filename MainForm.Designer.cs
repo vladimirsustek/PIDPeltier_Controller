@@ -1,5 +1,4 @@
-﻿using System.Timers;
-
+﻿
 namespace PIDPeltier_Controller
 {
     partial class MainForm
@@ -33,7 +32,6 @@ namespace PIDPeltier_Controller
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.aTimer = new System.Timers.Timer();
             this.COM = new System.IO.Ports.SerialPort(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -73,17 +71,11 @@ namespace PIDPeltier_Controller
             this.button6 = new System.Windows.Forms.Button();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.button12 = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.aTimer)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // aTimer
-            // 
-            this.aTimer.Enabled = true;
-            this.aTimer.SynchronizingObject = this;
             // 
             // groupBox1
             // 
@@ -471,8 +463,8 @@ namespace PIDPeltier_Controller
             this.Controls.Add(this.groupBox1);
             this.Name = "MainForm";
             this.Text = "PIDPeltier";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.aTimer)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);

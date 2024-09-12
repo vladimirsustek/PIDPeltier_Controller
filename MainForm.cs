@@ -8,24 +8,143 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Ports;
-using System.Timers;
 using System.Threading;
+using System.Collections.Concurrent;
 
 namespace PIDPeltier_Controller
 {
     public partial class MainForm : Form
     {
+        private SerialPort comDevice;
+        private DateTime localDate = DateTime.Now;
+        private BlockingCollection<bool> tempMeasTerminator;
+        private BlockingCollection<bool> comCommandTerminator;
+        private BlockingCollection<string> comCommandQueue;
+        private Thread tempMeasThread;
+        private Thread comControlThread;
+        private int tempMeas_Timeout;
+
+        private enum CmdRetItems { TWO_RETURN_ITEMS, THREE_RETURN_ITEMS };
+        private delegate void SafeCallDelegate(string command, CmdRetItems rItems);
         public MainForm()
         {
             InitializeComponent();
         }
+        private void tempMeas_routine()
+        {
+            while (true)
+            {
+                bool terminateLoop = false;
 
-        private SerialPort comDevice = new SerialPort();
-        private DateTime localDate = DateTime.Now;
-        private System.Timers.Timer aTimer;
-        bool TimerInitialized = false;
+                if (true == tempMeasTerminator.TryTake(out terminateLoop, tempMeas_Timeout) && terminateLoop)
+                {
+                    break;
+                }
+            }
+        }
+        private void comControlRoutine()
+        {
+            while (true)
+            {
+                string command;
+
+                if (true == comCommandQueue.TryTake(out command, -1))
+                {
+                    if (command == "CLOSE")
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        var threadParams = new System.Threading.ThreadStart(delegate { WriteRichBoxSafe(command, CmdRetItems.THREE_RETURN_ITEMS); });
+                        var thread = new Thread(threadParams);
+                        thread.Start();
+                    }
+                }
+            }
+        }
+
+        private void WriteRichBoxSafe(string text, CmdRetItems ret_items)
+        {
+            if (richTextBox1.InvokeRequired)
+            {
+                var dlg = new SafeCallDelegate(WriteRichBoxSafe);
+                richTextBox1.Invoke(dlg, new object[] { text, ret_items });
+            }
+            else
+            {
+                if (!comDevice.IsOpen)
+                {
+                    richTextBox1.AppendText("No COM available");
+                    richTextBox1.AppendText(Environment.NewLine);
+                    return;
+                }
+                comDevice.WriteLine(text);
+
+                string echo = comDevice.ReadLine();
+                string value = comDevice.ReadLine();
+                string status = comDevice.ReadLine();
+
+                DateTime commandTime = DateTime.Now;
+
+                richTextBox1.AppendText(commandTime.ToString("RX: HH:mm:ss.ff: ", System.Globalization.DateTimeFormatInfo.InvariantInfo));
+                richTextBox1.AppendText(echo);
+                richTextBox1.AppendText(Environment.NewLine);
+                richTextBox1.AppendText(commandTime.ToString("RX: HH:mm:ss.ff: ", System.Globalization.DateTimeFormatInfo.InvariantInfo));
+                richTextBox1.AppendText(value);
+                richTextBox1.AppendText(Environment.NewLine);
+                richTextBox1.AppendText(commandTime.ToString("RX: HH:mm:ss.ff: ", System.Globalization.DateTimeFormatInfo.InvariantInfo));
+                richTextBox1.AppendText(status);
+                richTextBox1.AppendText(Environment.NewLine);
+                richTextBox1.ScrollToCaret();
+
+                int len = richTextBox1.TextLength;
+                int lines;
+                if (len > 0)
+                {
+                    lines = richTextBox1.GetLineFromCharIndex(len - 1) + 1;
+                }
+                else
+                {
+                    lines = 0;
+                }
+                if (lines > 999)
+                {
+                    richTextBox1.Clear();
+                }
+            }
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (comDevice.IsOpen)
+            {
+                comDevice.Close();
+            }
+            tempMeasTerminator.Add(true);
+            comCommandQueue.Add("CLOSE");
+        }
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            string[] ports = SerialPort.GetPortNames();
+            this.comboBox1.Items.AddRange(ports);
+
+            comDevice = new SerialPort();
+            localDate = DateTime.Now;
+
+            tempMeasThread = new Thread(tempMeas_routine);
+            tempMeasTerminator = new BlockingCollection<bool>();
+            tempMeas_Timeout = 1000;
+
+            comControlThread = new Thread(comControlRoutine);
+            comCommandQueue = new BlockingCollection<string>();
+
+            comCommandTerminator = new BlockingCollection<bool>();
 
 
+            tempMeasThread.Start();
+            comControlThread.Start();
+        }
         private void printlineTimestamped(RichTextBox textbox, string line)
         {
             this.localDate = DateTime.Now;
@@ -48,14 +167,6 @@ namespace PIDPeltier_Controller
                 textbox.Clear();
             }
         }
-
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-            string[] ports = SerialPort.GetPortNames();
-            this.comboBox1.Items.AddRange(ports);
-
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
             if (checkBox1.Checked)
@@ -65,6 +176,11 @@ namespace PIDPeltier_Controller
             if(checkBox2.Checked)
             {
                 checkBox2.Checked = false;
+            }
+
+            if(comboBox1.Text == "")
+            {
+                return;
             }
 
             if (this.comDevice.IsOpen)
@@ -102,7 +218,7 @@ namespace PIDPeltier_Controller
             }
 
         }
-        private void PeriodicTempReadout(Object source, ElapsedEventArgs e)
+        private void PeriodicTempReadout(Object source, int e)
         {
             if (this.comDevice.IsOpen)
             {
@@ -129,6 +245,10 @@ namespace PIDPeltier_Controller
                     {
                         textBox5.Text = value;
                     }
+                    else
+                    {
+                        textBox5.Text = "Error";
+                    }
 
                     this.comDevice.WriteLine("RD_TER2");
                     cmd_echo = this.comDevice.ReadLine();
@@ -145,6 +265,10 @@ namespace PIDPeltier_Controller
                     if (0 == String.Compare(ok, "CMD_OK"))
                     {
                         textBox8.Text = value;
+                    }
+                    else
+                    {
+                        textBox5.Text = "Error";
                     }
 
                     Thread.Sleep(50);
@@ -165,6 +289,7 @@ namespace PIDPeltier_Controller
 
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
+            /*
             if (checkBox2.Checked)
             {
                 if(!TimerInitialized)
@@ -180,7 +305,7 @@ namespace PIDPeltier_Controller
             else
             {
                 aTimer.Enabled = false;
-            }
+            }*/
         }
 
         private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
@@ -280,44 +405,22 @@ namespace PIDPeltier_Controller
 
         private void button2_Click(object sender, EventArgs e)
         {
-            try
-            {
-                string cmd = "ST_PWM1_" + Int32.Parse(this.textBox2.Text).ToString().PadLeft(5, '0');
-                this.comDevice.WriteLine(cmd);
-                string echo = this.comDevice.ReadLine();
-                string status = this.comDevice.ReadLine();
-                printlineTimestamped(richTextBox1, echo);
-                printlineTimestamped(richTextBox1, status);
-            }
-            catch (Exception exception)
-            {
-                this.printlineTimestamped(this.richTextBox1, exception.ToString());
-            }
+            string cmd = "ST_PWM1_" + Int32.Parse(this.textBox2.Text).ToString().PadLeft(5, '0');
+            comCommandQueue.Add(cmd);
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            try
-            {
-                string cmd = "ST_PWM2_" + Int32.Parse(this.textBox3.Text).ToString().PadLeft(5, '0');
-                this.comDevice.WriteLine(cmd);
-                string echo = this.comDevice.ReadLine();
-                string status = this.comDevice.ReadLine();
-                printlineTimestamped(richTextBox1, echo);
-                printlineTimestamped(richTextBox1, status);
-            }
-            catch (Exception exception)
-            {
-                this.printlineTimestamped(this.richTextBox1, exception.ToString());
-            }
+            string cmd = "ST_PWM2_" + Int32.Parse(this.textBox3.Text).ToString().PadLeft(5, '0');
+            comCommandQueue.Add(cmd);
         }
-
         private void button4_Click(object sender, EventArgs e)
         {
             if (this.comDevice.IsOpen)
             {
                 try
                 {
+                    /*
                     this.localDate = DateTime.Now;
                     textBox6.Text = localDate.ToString("HH:mm:ss.ff");
 
@@ -356,6 +459,10 @@ namespace PIDPeltier_Controller
                     {
                         textBox8.Text = value;
                     }
+                    */
+                    comCommandQueue.Add("RD_TER1");
+                    comCommandQueue.Add("RD_TER2");
+
 
                 }
                 catch (Exception exception)
@@ -367,34 +474,12 @@ namespace PIDPeltier_Controller
 
         private void button5_Click(object sender, EventArgs e)
         {
-            try
-            {
-                this.comDevice.WriteLine("ST_LEDR_1");
-                string echo = this.comDevice.ReadLine();
-                string status = this.comDevice.ReadLine();
-                printlineTimestamped(richTextBox1, echo);
-                printlineTimestamped(richTextBox1, status);
-            }
-            catch (Exception exception)
-            {
-                this.printlineTimestamped(this.richTextBox1, exception.ToString());
-            }
+            comCommandQueue.Add("ST_LEDR_1");
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            try
-            {
-                this.comDevice.WriteLine("ST_LEDR_0");
-                string echo = this.comDevice.ReadLine();
-                string status = this.comDevice.ReadLine();
-                printlineTimestamped(richTextBox1, echo);
-                printlineTimestamped(richTextBox1, status);
-            }
-            catch (Exception exception)
-            {
-                this.printlineTimestamped(this.richTextBox1, exception.ToString());
-            }
+            comCommandQueue.Add("ST_LEDR_0");
         }
         private void comboBox1_Clicked(object sender, EventArgs e)
         {
@@ -408,89 +493,37 @@ namespace PIDPeltier_Controller
 
         private void button7_Click(object sender, EventArgs e)
         {
-            try
-            {
-                this.comDevice.WriteLine("EN_PWM1_1");
-                string echo = this.comDevice.ReadLine();
-                string status = this.comDevice.ReadLine();
-                printlineTimestamped(richTextBox1, echo);
-                printlineTimestamped(richTextBox1, status);
-            }
-            catch (Exception exception)
-            {
-                this.printlineTimestamped(this.richTextBox1, exception.ToString());
-            }
+            comCommandQueue.Add("EN_PWM1_1");
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
-            try
-            {
-                this.comDevice.WriteLine("EN_PWM1_0");
-                string echo = this.comDevice.ReadLine();
-                string status = this.comDevice.ReadLine();
-                printlineTimestamped(richTextBox1, echo);
-                printlineTimestamped(richTextBox1, status);
-            }
-            catch (Exception exception)
-            {
-                this.printlineTimestamped(this.richTextBox1, exception.ToString());
-            }
+            comCommandQueue.Add("EN_PWM1_0");
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
-            try
-            {
-                this.comDevice.WriteLine("EN_PWM2_1");
-                string echo = this.comDevice.ReadLine();
-                string status = this.comDevice.ReadLine();
-                printlineTimestamped(richTextBox1, echo);
-                printlineTimestamped(richTextBox1, status);
-            }
-            catch (Exception exception)
-            {
-                this.printlineTimestamped(this.richTextBox1, exception.ToString());
-            }
+            comCommandQueue.Add("EN_PWM2_1");
         }
 
         private void button10_Click(object sender, EventArgs e)
         {
-            try
-            {
-                this.comDevice.WriteLine("EN_PWM2_0");
-                string echo = this.comDevice.ReadLine();
-                string status = this.comDevice.ReadLine();
-                printlineTimestamped(richTextBox1, echo);
-                printlineTimestamped(richTextBox1, status);
-            }
-            catch (Exception exception)
-            {
-                this.printlineTimestamped(this.richTextBox1, exception.ToString());
-            }
+            comCommandQueue.Add("EN_PWM2_0");
         }
 
         private void button11_Click(object sender, EventArgs e)
         {
-            try
-            {
-                this.comDevice.WriteLine("ST_SWDG");
-                string echo = this.comDevice.ReadLine();
-                string status = this.comDevice.ReadLine();
-                printlineTimestamped(richTextBox1, echo);
-                printlineTimestamped(richTextBox1, status);
-            }
-            catch (Exception exception)
-            {
-                this.printlineTimestamped(this.richTextBox1, exception.ToString());
-            }
+            comCommandQueue.Add("ST_SWDG");
         }
 
         private void button12_Click(object sender, EventArgs e)
         {
             this.richTextBox1.Clear();
         }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            comCommandQueue.Add("ST_LEDR_1");
+        }
     }
-
-
 }
