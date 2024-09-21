@@ -24,9 +24,9 @@ namespace PIDPeltier_Controller
         private int tempMeas_Timeout;
 
         private enum CmdRetItems { TWO_RETURN_ITEMS, THREE_RETURN_ITEMS };
-        private delegate void SafeCallDelegate(string echo, string value, string status);
-        private delegate void SafeCallDelegateTer(string temperature);
-        private delegate void SafeCallDelegateUncheckCheckbox();
+        private delegate void SafeCallRichBox1Delegate(string echo, string value, string status);
+        private delegate void SafeCallLabel5or8Delegate(string temperature);
+        private delegate void SafeCallCheckBox2Delegate();
         public MainForm()
         {
             InitializeComponent();
@@ -43,7 +43,7 @@ namespace PIDPeltier_Controller
         {
             if (textBox5.InvokeRequired)
             {
-                var dlg = new SafeCallDelegateUncheckCheckbox(uncheckCheckbox2_routine);
+                var dlg = new SafeCallCheckBox2Delegate(uncheckCheckbox2_routine);
                 checkBox2.Invoke(dlg, new object[] {});
             }
             else
@@ -106,7 +106,7 @@ namespace PIDPeltier_Controller
                         }
                         finally
                         {
-                            var threadParams = new System.Threading.ThreadStart(delegate { WriteRichBoxSafe(echo, value, status); });
+                            var threadParams = new System.Threading.ThreadStart(delegate { writeRichBoxSafe(echo, value, status); });
                             var thread = new Thread(threadParams);
                             thread.Start();
                         }
@@ -116,14 +116,14 @@ namespace PIDPeltier_Controller
                             case "RD_TER1":
                                 {
                                     ThreadStart sas;
-                                    var tp = new System.Threading.ThreadStart(delegate { WriteTER1LabelSafe(value); });
+                                    var tp = new System.Threading.ThreadStart(delegate { writeTER1LabelSafe(value); });
                                     var t = new Thread(tp);
                                     t.Start();
                                 }
                                 break;
                             case "RD_TER2":
                                 {
-                                    var tp = new System.Threading.ThreadStart(delegate { WriteTER2LabelSafe(value); });
+                                    var tp = new System.Threading.ThreadStart(delegate { writeTER2LabelSafe(value); });
                                     var t = new Thread(tp);
                                     t.Start();
                                 }
@@ -136,11 +136,11 @@ namespace PIDPeltier_Controller
                 }
             }
         }
-        private void WriteTER1LabelSafe(string temperature)
+        private void writeTER1LabelSafe(string temperature)
         {
             if(textBox5.InvokeRequired)
             {
-                var dlg = new SafeCallDelegateTer(WriteTER1LabelSafe);
+                var dlg = new SafeCallLabel5or8Delegate(writeTER1LabelSafe);
                 textBox5.Invoke(dlg, new object[] { temperature });
             }
             else
@@ -149,11 +149,11 @@ namespace PIDPeltier_Controller
             }
         }
 
-        private void WriteTER2LabelSafe(string temperature)
+        private void writeTER2LabelSafe(string temperature)
         {
             if (textBox5.InvokeRequired)
             {
-                var dlg = new SafeCallDelegateTer(WriteTER2LabelSafe);
+                var dlg = new SafeCallLabel5or8Delegate(writeTER2LabelSafe);
                 textBox8.Invoke(dlg, new object[] { temperature });
             }
             else
@@ -162,11 +162,11 @@ namespace PIDPeltier_Controller
             }
         }
 
-        private void WriteRichBoxSafe(string echo, string value, string status)
+        private void writeRichBoxSafe(string echo, string value, string status)
         {
             if (richTextBox1.InvokeRequired)
             {
-                var dlg = new SafeCallDelegate(WriteRichBoxSafe);
+                var dlg = new SafeCallRichBox1Delegate(writeRichBoxSafe);
                 richTextBox1.Invoke(dlg, new object[] { echo, value, status });
             }
             else
