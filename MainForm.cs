@@ -26,9 +26,33 @@ namespace PIDPeltier_Controller
         private enum CmdRetItems { TWO_RETURN_ITEMS, THREE_RETURN_ITEMS };
         private delegate void SafeCallDelegate(string echo, string value, string status);
         private delegate void SafeCallDelegateTer(string temperature);
+        private delegate void SafeCallDelegateUncheckCheckbox();
         public MainForm()
         {
             InitializeComponent();
+        }
+
+        private void popUpExceptionWindow(string message)
+        {
+            ExceptionForm form2 = new ExceptionForm();
+            form2.SetLabelText(message);
+            form2.ShowDialog();
+        }
+
+        private void uncheckCheckbox2_routine()
+        {
+            if (textBox5.InvokeRequired)
+            {
+                var dlg = new SafeCallDelegateUncheckCheckbox(uncheckCheckbox2_routine);
+                checkBox2.Invoke(dlg, new object[] {});
+            }
+            else
+            {
+                if(checkBox2.Checked)
+                {
+                    checkBox2.Checked = false;
+                }
+            }
         }
         private void tempMeas_routine()
         {
@@ -59,67 +83,43 @@ namespace PIDPeltier_Controller
                     }
                     else
                     {
-                        string echo = "ECHO_ERR";
-                        string value = "VALUE_ERR";
-                        string status = "STATUS_ERR";
+                        string echo = "Echo word error";
+                        string value = "Value word error";
+                        string status = "Status word error";
                         try
                         {
                             comDevice.WriteLine(command);
-                        }
-                        catch (Exception ex)
-                        {
-
-                        }
-                            try
-                        {
                             echo = comDevice.ReadLine();
-
-                        }
-                        catch (Exception ex)
-                        {
-                            if(ex.GetType().FullName != "System.TimeoutException")
-                            {
-
-                            }
-                        }
-
-                        try
-                        {
                             value = comDevice.ReadLine();
-                        }
-                        catch (Exception ex)
-                        {
-                            if (ex.GetType().FullName != "System.TimeoutException")
-                            {
-
-                            }
-                        }
-
-                        try
-                        {
                             status = comDevice.ReadLine();
                         }
                         catch (Exception ex)
                         {
-                            if (ex.GetType().FullName != "System.TimeoutException")
-                            {
-
-                            }
+                            tempMeasTerminator.Add(true);
+                            while (comCommandQueue.TryTake(out _)) { }
+                            popUpExceptionWindow(ex.ToString());
+                            var checkboxThreadParams = new System.Threading.ThreadStart(delegate { uncheckCheckbox2_routine(); });
+                            var checkboxThread = new Thread(checkboxThreadParams);
+                            checkboxThread.Start();
+                            checkboxThread.Join();
+                            continue;
                         }
-
-                        var threadParams = new System.Threading.ThreadStart(delegate { WriteRichBoxSafe(echo, value, status); });
-                        var thread = new Thread(threadParams);
-                        thread.Start();
+                        finally
+                        {
+                            var threadParams = new System.Threading.ThreadStart(delegate { WriteRichBoxSafe(echo, value, status); });
+                            var thread = new Thread(threadParams);
+                            thread.Start();
+                        }
 
                         switch (command)
                         {
                             case "RD_TER1":
                                 {
+                                    ThreadStart sas;
                                     var tp = new System.Threading.ThreadStart(delegate { WriteTER1LabelSafe(value); });
                                     var t = new Thread(tp);
                                     t.Start();
                                 }
-                                // code block
                                 break;
                             case "RD_TER2":
                                 {
@@ -249,10 +249,6 @@ namespace PIDPeltier_Controller
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            if (checkBox1.Checked)
-            {
-                checkBox1.Checked = false;
-            }
             if(checkBox2.Checked)
             {
                 checkBox2.Checked = false;
@@ -303,6 +299,7 @@ namespace PIDPeltier_Controller
 
             if (checkBox2.Checked)
             {
+                while (tempMeasTerminator.TryTake(out _)) { }
                 tempMeasThread = new Thread(tempMeas_routine);
 
                 int requiredTimemout = Int32.Parse(textBox4.Text);
@@ -404,5 +401,6 @@ namespace PIDPeltier_Controller
         {
             comCommandQueue.Add("ST_LEDR_1");
         }
+
     }
 }
